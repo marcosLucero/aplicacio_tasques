@@ -12,7 +12,20 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   List tasquesLlista = [
     {"titol": "Tasca 1", "valor": false},
     {"titol": "Tasca 2", "valor": true},
+    {"titol": "Tasca 3", "valor": true},
   ];
+  void canviaChecbox(bool valorCheckbox, int posLlista){
+    setState(() {
+      tasquesLlista[posLlista]["valor"] = !tasquesLlista[posLlista]["valor"]; 
+    });
+  }
+
+  void accioEsborrarTasca(int posLlista){
+    setState(() {
+      tasquesLlista.removeAt(posLlista);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +56,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           return ItemTasca(
             texTasca: tasquesLlista[index]["titol"],//"tasca", 
             valorCheckbox: tasquesLlista[index]["valor"],
+            canviavalorChecbox: (valor) => canviaChecbox(tasquesLlista[index]["valor"], index,),
+            esborraTasca: (valor) => accioEsborrarTasca(index),
           );
         },
       ),
