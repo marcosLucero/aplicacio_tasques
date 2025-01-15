@@ -1,6 +1,8 @@
 import 'package:aplicacio_tasques/componentes/item_tasca.dart';
+import 'package:aplicacio_tasques/data/base_de_dades.dart';
 import 'package:flutter/material.dart';
 import 'package:aplicacio_tasques/componentes/dialog_nova_tasca.dart';
+import 'package:hive/hive.dart';
 
 class PaginaPrincipal extends StatefulWidget {
   const PaginaPrincipal({super.key});
@@ -10,39 +12,46 @@ class PaginaPrincipal extends StatefulWidget {
 }
 
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
-  List tasquesLlista = [
+  /*List tasquesLlista = [
     {"titol": "Tasca 1", "valor": false},
     {"titol": "Tasca 2", "valor": true},
     {"titol": "Tasca 3", "valor": true},
-  ];
+  ];*/
+
+  final Box _boxHive = Hive.box("box_tasques_app");
+  BaseDeDades db = BaseDeDades();
 
   TextEditingController tecTextTasca = TextEditingController();
 
   void accioGuardar() {
     setState(() {
-      tasquesLlista.add({
+      db.tasquesLlista.add({
         "titol": tecTextTasca.text,
-        "valor": false, 
+        "valor": false,
       });
     });
+    db.actualitzarDades();
     accioCancelar(); //para llamar a la funcion de cancelar y hacer las dos funciones
   }
 
   void accioCancelar() {
     tecTextTasca.clear();
-    Navigator.of(context).pop();    
+    Navigator.of(context).pop();
   }
 
   void canviaChecbox(bool valorCheckbox, int posLlista) {
     setState(() {
-      tasquesLlista[posLlista]["valor"] = !tasquesLlista[posLlista]["valor"];
+      db.tasquesLlista[posLlista]["valor"] =
+          !db.tasquesLlista[posLlista]["valor"];
     });
+    db.actualitzarDades();
   }
 
   void accioEsborrarTasca(int posLlista) {
     setState(() {
-      tasquesLlista.removeAt(posLlista);
+      db.tasquesLlista.removeAt(posLlista);
     });
+    db.actualitzarDades();
   }
 
   void crearNovaTasca() {
@@ -81,13 +90,13 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
       // Body.
       body: ListView.builder(
-        itemCount: tasquesLlista.length,
+        itemCount: db.tasquesLlista.length,
         itemBuilder: (context, index) {
           return ItemTasca(
-            texTasca: tasquesLlista[index]["titol"], //"tasca",
-            valorCheckbox: tasquesLlista[index]["valor"],
+            texTasca: db.tasquesLlista[index]["titol"], //"tasca",
+            valorCheckbox: db.tasquesLlista[index]["valor"],
             canviavalorChecbox: (valor) => canviaChecbox(
-              tasquesLlista[index]["valor"],
+              db.tasquesLlista[index]["valor"],
               index,
             ),
             esborraTasca: (valor) => accioEsborrarTasca(index),
