@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 class BaseDeDades {
+  
   List tasquesLlista = [];
 
   final Box _boxDeLaHive = Hive.box("box_tasques_app");

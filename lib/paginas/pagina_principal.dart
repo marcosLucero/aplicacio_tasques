@@ -23,13 +23,33 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
   TextEditingController tecTextTasca = TextEditingController();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (_boxHive.get("box_tasques_app") == null) {
+      // Si no existeixen dades, les creem.
+      db.crearDades();
+      //db.actualitzarDades();
+    } else {
+      if (_boxHive.get("box_tasques_app").isEmpty) {
+        db.crearDades();
+      }
+      // Si existeixen dades, les carreguem.
+      db.carregarTasques();
+    }
+
+    super.initState();
+  }
+
   void accioGuardar() {
     setState(() {
-      db.tasquesLlista.add({
+      db.tasquesLlista.add(
+        {
         "titol": tecTextTasca.text,
         "valor": false,
-      });
-    });
+        }
+      );
+    } );
     db.actualitzarDades();
     accioCancelar(); //para llamar a la funcion de cancelar y hacer las dos funciones
   }
@@ -41,8 +61,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
   void canviaChecbox(bool valorCheckbox, int posLlista) {
     setState(() {
-      db.tasquesLlista[posLlista]["valor"] =
-          !db.tasquesLlista[posLlista]["valor"];
+      db.tasquesLlista[posLlista]["valor"] = !db.tasquesLlista[posLlista]["valor"];
     });
     db.actualitzarDades();
   }
